@@ -1,0 +1,25 @@
+{
+  "name": "游戏王判例提问助手",
+  "short_name": "YGO判例",
+  "description": "搜索游戏王卡片并生成可复制到 AI 应用的判例 Prompt。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f4",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "./icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "生成判例 Prompt",
+      "url": "./index.html",
+      "description": "打开游戏王判例提问助手"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>游戏王卡片判例助手</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css?v=20260929-17" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <aside class="search-pane" aria-label="卡片搜索">
+          <div class="brand">
+            <div>
+              <p class="eyebrow">Yu-Gi-Oh! Ruling Prompt</p>
+              <h1>游戏王判例提问助手</h1>
+            </div>
+            <span id="dataBadge" class="badge">初始化</span>
+          </div>
+
+          <form id="searchForm" class="search-box">
+            <label for="query">关键词、译名、卡号或效果文本</label>
+            <div class="search-row">
+              <input id="query" name="query" autocomplete="off" placeholder="例如：青眼白龙 / 灰流丽 / 89631139" />
+              <button type="submit">搜索</button>
+            </div>
+          </form>
+
+          <section class="history-panel" aria-label="搜索历史">
+            <div class="history-head">
+              <span>搜索历史</span>
+              <button id="clearHistoryBtn" type="button">清空历史</button>
+            </div>
+            <div id="searchHistory" class="history-list empty">暂无搜索历史</div>
+          </section>
+
+          <div class="toolbar">
+            <button id="loadLocalBtn" type="button">读取本地卡库</button>
+            <button id="updatePoolBtn" type="button">更新卡池</button>
+            <button id="fetchScriptsBtn" type="button">获取 YGO 脚本</button>
+            <button id="clearBtn" type="button">清空选择</button>
+          </div>
+
+          <p id="status" class="status">正在检查本地卡库。</p>
+          <div id="results" class="results" aria-live="polite"></div>
+        </aside>
+
+        <section class="prompt-pane" aria-label="提问构造">
+          <div class="selected-header">
+            <div>
+              <p class="eyebrow">Selected Cards</p>
+              <h2>@ 引用卡片</h2>
+            </div>
+            <span id="selectedCount" class="counter">0</span>
+          </div>
+
+          <div id="selectedCards" class="selected-list empty">还没有引用卡片。搜索结果点“引用”会插入 @《卡名》。</div>
+
+          <label class="field">
+            <span>判例场景模板</span>
+            <select id="scenarioPreset">
+              <option value="">不使用模板</option>
+              <option value="ash-called-by-rota">增援 → 灰流丽 → 墓穴的指名者</option>
+              <option value="generic-chain">通用连锁处理</option>
+              <option value="targeting">取对象与效果处理时对象状态</option>
+            </select>
+          </label>
+
+          <div class="field">
+            <div class="field-head">
+              <span>你的判例问题</span>
+              <button id="clearQuestionBtn" class="small-action" type="button">清空</button>
+            </div>
+            <div
+              id="question"
+              class="rich-editor"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              data-placeholder="例如：我方发动 @《增援》，对方连锁 @《灰流丽》，这个处理顺序是否成立？"
+            ></div>
+          </div>
+          <div id="mentionSuggest" class="mention-suggest" hidden></div>
+
+          <div class="field">
+            <div class="field-head">
+              <span>补充场景</span>
+              <button id="clearScenarioBtn" class="small-action" type="button">清空</button>
+            </div>
+            <div
+              id="scenario"
+              class="rich-editor small"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              data-placeholder="可写双方场上、墓地、连锁、回合阶段、已适用效果等；可以继续使用 @《卡名》。请补充：1. 发动时选择了哪些对象。2. 连锁中对象发生了什么变化。3. 效果文本中是否写有“那只/那些/那张/那些卡”“那之后”“并且”等处理关联词。"
+            ></div>
+          </div>
+
+          <div class="options">
+            <label><input id="includeRaw" type="checkbox" checked /> 包含原始卡片字段</label>
+            <label><input id="includeScripts" type="checkbox" checked /> 包含 YGO Lua 脚本</label>
+            <label><input id="askForCitations" type="checkbox" checked /> 要求给出依据与不确定点</label>
+          </div>
+
+          <div class="prompt-actions">
+            <button id="buildPromptBtn" type="button">生成 Prompt</button>
+            <button id="copyPromptBtn" type="button">复制</button>
+          </div>
+
+          <section class="mobile-panel" aria-label="手机 AI 应用">
+            <div class="mobile-panel-head">
+              <div>
+                <p class="eyebrow">Mobile Handoff</p>
+                <h2>手机 AI 应用</h2>
+              </div>
+              <span id="aiBindingBadge" class="badge">DeepSeek</span>
+            </div>
+
+            <div class="ai-grid">
+              <label class="field">
+                <span>绑定应用</span>
+                <select id="aiAppSelect">
+                  <option value="deepseek">DeepSeek</option>
+                  <option value="chatgpt">ChatGPT</option>
+                  <option value="tongyi">通义</option>
+                  <option value="gemini">Gemini</option>
+                  <option value="custom">自定义</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Android 包名</span>
+                <input id="aiPackageInput" autocomplete="off" placeholder="com.deepseek.chat" />
+              </label>
+              <label class="field">
+                <span>打开地址</span>
+                <input id="aiUrlInput" autocomplete="off" placeholder="https://chat.deepseek.com/" />
+              </label>
+            </div>
+
+            <div class="prompt-actions">
+              <button id="copyOpenAiBtn" type="button">复制并打开 AI</button>
+              <button id="sharePromptBtn" class="secondary" type="button">系统分享</button>
+            </div>
+          </section>
+
+          <label class="field prompt-output">
+            <span>复制给 DeepSeek 网页端</span>
+            <textarea id="promptOutput" rows="14" readonly></textarea>
+          </label>
+        </section>
+      </section>
+    </main>
+
+    <template id="cardTemplate">
+      <article class="card">
+        <div class="card-main">
+          <h3></h3>
+          <p class="names"></p>
+          <p class="types"></p>
+          <p class="desc"></p>
+        </div>
+        <button type="button"></button>
+      </article>
+    </template>
+
+    <script src="./app.js?v=20260929-17"></script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+# ---------- macOS ----------
+.DS_Store
+**/.DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+.fseventsd
+*.swp
+
+# ---------- 编辑器 / IDE ----------
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# ---------- 卡库数据（体积大，可用 scripts/sync-cards.sh 重新生成）----------
+data/cards.json
+data/*.zip
+*.cards.tmp
+
+# 注意：如果确实需要连同卡库一起发布（例如 GitHub Pages 想直接离线搜索），
+# 删掉上面这行并在提交前先执行 `bash scripts/sync-cards.sh`。
+
+# ---------- Android 构建产物 ----------
+android/build/
+android/app/src/main/assets/
+android/**/*.apk
+android/**/*.apk.idsig
+android/**/*.dex
+android/**/R.java
+android/**/*.class
+
+# ---------- 签名文件 / 密钥（严禁上传）----------
+*.keystore
+*.jks
+*.p12
+*.pem
+keystore.properties
+local.properties
+
+# ---------- 临时文件 ----------
+*.log
+*.tmp
+*.bak
+*~
+cache/
