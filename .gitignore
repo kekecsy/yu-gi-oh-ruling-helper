@@ -47,3 +47,7 @@ local.properties
 *.bak
 *~
 cache/
+
+# ---------- AI 助手本地工作记录 ----------
+# 只忽略本机记忆（含本地绝对路径），.workbuddy/skills 等仍可正常提交
+.workbuddy/memory/
